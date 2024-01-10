@@ -1,0 +1,21 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Start Building Task",
+            "type": "shell",
+            "command": "fvm flutter pub run build_runner watch --delete-conflicting-outputs",
+            "windows": {
+                "command": "fvm flutter pub run build_runner watch --delete-conflicting-outputs"
+            },
+            "group": "none",
+            "presentation": {
+                "reveal": "always",
+                "panel": "new"
+            },
+            "runOptions": {
+                "runOn": "folderOpen",
+            }
+        }
+    ]
+}
