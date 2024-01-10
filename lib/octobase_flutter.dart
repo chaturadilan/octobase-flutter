@@ -7,7 +7,6 @@ import 'package:octobase_flutter/models/user_info.dart';
 import 'package:pluralize/pluralize.dart';
 
 import 'models/collection.dart';
-import 'models/item.dart';
 import 'models/octobase_error.dart';
 
 class OctobaseServer {
@@ -205,7 +204,7 @@ class Octobase {
     }
   }
 
-  Future<Item<T>> selectOne<T>(
+  Future<T> selectOne<T>(
     T Function(Map<String, dynamic>) fromJson,
     int id, {
     String? controller,
@@ -220,7 +219,6 @@ class Octobase {
     mainRoute ??= this.mainRoute;
     controller ??= Pluralize().plural(T.toString().toLowerCase());
     try {
-      fromJsonModel(data) => fromJson(data as Map<String, dynamic>);
       var data = {};
       data['with'] = withOthers ?? data['with'];
       data['select'] = select ?? data['select'];
@@ -232,8 +230,77 @@ class Octobase {
           headers: {'Authorization': 'Bearer $token'},
         ),
       );
-      var obj = Item<T>.fromJson(response.data, fromJsonModel);
+      var obj = fromJson(response.data);
       return obj;
+    } on DioException catch (ex) {
+      OctobaseError error = OctobaseError.fromJson(ex.response?.data);
+      error.code = ex.response?.statusCode;
+      logger.e("Error => Code: ${error.code}, Message: ${error.error}");
+      throw error;
+    }
+  }
+
+  Future<T> add<T>(T Function(Map<String, dynamic>) fromJson,
+      {Map<String, dynamic>? data,
+      String? controller,
+      String? mainRoute}) async {
+    mainRoute ??= this.mainRoute;
+    controller ??= Pluralize().plural(T.toString().toLowerCase());
+    try {
+      Response response = await _dio.post(
+        '/$mainRoute/$controller',
+        data: data,
+        options: Options(
+          headers: {'Authorization': 'Bearer $token'},
+        ),
+      );
+      var obj = fromJson(response.data);
+      return obj;
+    } on DioException catch (ex) {
+      OctobaseError error = OctobaseError.fromJson(ex.response?.data);
+      error.code = ex.response?.statusCode;
+      logger.e("Error => Code: ${error.code}, Message: ${error.error}");
+      throw error;
+    }
+  }
+
+  Future<T> update<T>(T Function(Map<String, dynamic>) fromJson, int id,
+      {Map<String, dynamic>? data,
+      String? controller,
+      String? mainRoute}) async {
+    mainRoute ??= this.mainRoute;
+    controller ??= Pluralize().plural(T.toString().toLowerCase());
+    try {
+      Response response = await _dio.post(
+        '/$mainRoute/$controller/$id',
+        data: data,
+        options: Options(
+          headers: {'Authorization': 'Bearer $token'},
+        ),
+      );
+      var obj = fromJson(response.data);
+      return obj;
+    } on DioException catch (ex) {
+      OctobaseError error = OctobaseError.fromJson(ex.response?.data);
+      error.code = ex.response?.statusCode;
+      logger.e("Error => Code: ${error.code}, Message: ${error.error}");
+      throw error;
+    }
+  }
+
+  Future<OctobaseSuccess> delete<T>(int id,
+      {String? controller, String? mainRoute}) async {
+    mainRoute ??= this.mainRoute;
+    controller ??= Pluralize().plural(T.toString().toLowerCase());
+    try {
+      Response response = await _dio.delete(
+        '/$mainRoute/$controller/$id',
+        options: Options(
+          headers: {'Authorization': 'Bearer $token'},
+        ),
+      );
+      var success = OctobaseSuccess.fromJson(response.data);
+      return success;
     } on DioException catch (ex) {
       OctobaseError error = OctobaseError.fromJson(ex.response?.data);
       error.code = ex.response?.statusCode;
