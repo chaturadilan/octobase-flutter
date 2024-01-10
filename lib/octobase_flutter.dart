@@ -2,6 +2,7 @@ library octobase_flutter;
 
 import 'package:dio/dio.dart';
 import 'package:logger/logger.dart';
+import 'package:octobase_flutter/enums/action_type.dart';
 import 'package:octobase_flutter/models/octobase_success.dart';
 import 'package:octobase_flutter/models/user_info.dart';
 import 'package:pluralize/pluralize.dart';
@@ -301,6 +302,59 @@ class Octobase {
       );
       var success = OctobaseSuccess.fromJson(response.data);
       return success;
+    } on DioException catch (ex) {
+      OctobaseError error = OctobaseError.fromJson(ex.response?.data);
+      error.code = ex.response?.statusCode;
+      logger.e("Error => Code: ${error.code}, Message: ${error.error}");
+      throw error;
+    }
+  }
+
+  Future<T> custom<T>(T Function(Map<String, dynamic>) fromJson, String? url,
+      ActionType actionType,
+      {String? mainRoute, Map<String, dynamic>? data}) async {
+    mainRoute ??= this.mainRoute;
+    var headers = <String, dynamic>{};
+    headers['Authorization'] = 'Bearer $token';
+    Response? response;
+    try {
+      switch (actionType) {
+        case ActionType.put:
+          response = await _dio.put(
+            '/$mainRoute/$url',
+            options: Options(
+              headers: headers,
+            ),
+          );
+          break;
+        case ActionType.get:
+          response = await _dio.get(
+            '/$mainRoute/$url',
+            options: Options(
+              headers: headers,
+            ),
+          );
+          break;
+        case ActionType.delete:
+          response = await _dio.delete(
+            '/$mainRoute/$url',
+            options: Options(
+              headers: headers,
+            ),
+          );
+          break;
+        default:
+          response = await _dio.post(
+            '/$mainRoute/$url',
+            data: data,
+            options: Options(
+              headers: headers,
+            ),
+          );
+      }
+
+      var obj = fromJson(response.data);
+      return obj;
     } on DioException catch (ex) {
       OctobaseError error = OctobaseError.fromJson(ex.response?.data);
       error.code = ex.response?.statusCode;
