@@ -1,9 +1,12 @@
 library octobase_flutter;
 
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:logger/logger.dart';
 import 'package:octobase_flutter/enums/action_type.dart';
 import 'package:octobase_flutter/models/octobase_success.dart';
+import 'package:octobase_flutter/models/server_connection_error.dart';
 import 'package:octobase_flutter/models/user_info.dart';
 import 'package:pluralize/pluralize.dart';
 
@@ -57,10 +60,15 @@ class Octobase {
       token = userInfo.token ?? '';
       return userInfo;
     } on DioException catch (ex) {
-      OctobaseError error = OctobaseError.fromJson(ex.response?.data);
-      error.code = ex.response?.statusCode;
-      logger.e("Error => Code: ${error.code}, Message: ${error.error}");
-      throw error;
+      if (ex.error is SocketException) {
+        logger.e("Error => Not able to connect to the server");
+        throw ServerConnectionError(ex.message!);
+      } else {
+        OctobaseError error = OctobaseError.fromJson(ex.response?.data);
+        error.code = ex.response?.statusCode;
+        logger.e("Error => Code: ${error.code}, Message: ${error.error}");
+        throw error;
+      }
     }
   }
 
@@ -77,10 +85,15 @@ class Octobase {
       token = userInfo.token ?? '';
       return userInfo;
     } on DioException catch (ex) {
-      OctobaseError error = OctobaseError.fromJson(ex.response?.data);
-      error.code = ex.response?.statusCode;
-      logger.e("Error => Code: ${error.code}, Message: ${error.error}");
-      throw error;
+      if (ex.error is SocketException) {
+        logger.e("Error => Not able to connect to the server");
+        throw ServerConnectionError(ex.message!);
+      } else {
+        OctobaseError error = OctobaseError.fromJson(ex.response?.data);
+        error.code = ex.response?.statusCode;
+        logger.e("Error => Code: ${error.code}, Message: ${error.error}");
+        throw error;
+      }
     }
   }
 
@@ -96,10 +109,15 @@ class Octobase {
       token = userInfo.token ?? '';
       return userInfo;
     } on DioException catch (ex) {
-      OctobaseError error = OctobaseError.fromJson(ex.response?.data);
-      error.code = ex.response?.statusCode;
-      logger.e("Error => Code: ${error.code}, Message: ${error.error}");
-      throw error;
+      if (ex.error is SocketException) {
+        logger.e("Error => Not able to connect to the server");
+        throw ServerConnectionError(ex.message!);
+      } else {
+        OctobaseError error = OctobaseError.fromJson(ex.response?.data);
+        error.code = ex.response?.statusCode;
+        logger.e("Error => Code: ${error.code}, Message: ${error.error}");
+        throw error;
+      }
     }
   }
 
@@ -115,10 +133,15 @@ class Octobase {
       token = userInfo.token ?? '';
       return userInfo;
     } on DioException catch (ex) {
-      OctobaseError error = OctobaseError.fromJson(ex.response?.data);
-      error.code = ex.response?.statusCode;
-      logger.e("Error => Code: ${error.code}, Message: ${error.error}");
-      throw error;
+      if (ex.error is SocketException) {
+        logger.e("Error => Not able to connect to the server");
+        throw ServerConnectionError(ex.message!);
+      } else {
+        OctobaseError error = OctobaseError.fromJson(ex.response?.data);
+        error.code = ex.response?.statusCode;
+        logger.e("Error => Code: ${error.code}, Message: ${error.error}");
+        throw error;
+      }
     }
   }
 
@@ -133,10 +156,15 @@ class Octobase {
       var success = OctobaseSuccess.fromJson(response.data);
       return success;
     } on DioException catch (ex) {
-      OctobaseError error = OctobaseError.fromJson(ex.response?.data);
-      error.code = ex.response?.statusCode;
-      logger.e("Error => Code: ${error.code}, Message: ${error.error}");
-      throw error;
+      if (ex.error is SocketException) {
+        logger.e("Error => Not able to connect to the server");
+        throw ServerConnectionError(ex.message!);
+      } else {
+        OctobaseError error = OctobaseError.fromJson(ex.response?.data);
+        error.code = ex.response?.statusCode;
+        logger.e("Error => Code: ${error.code}, Message: ${error.error}");
+        throw error;
+      }
     }
   }
 
@@ -152,10 +180,15 @@ class Octobase {
       token = userInfo.token ?? '';
       return userInfo;
     } on DioException catch (ex) {
-      OctobaseError error = OctobaseError.fromJson(ex.response?.data);
-      error.code = ex.response?.statusCode;
-      logger.e("Error => Code: ${error.code}, Message: ${error.error}");
-      throw error;
+      if (ex.error is SocketException) {
+        logger.e("Error => Not able to connect to the server");
+        throw ServerConnectionError(ex.message!);
+      } else {
+        OctobaseError error = OctobaseError.fromJson(ex.response?.data);
+        error.code = ex.response?.statusCode;
+        logger.e("Error => Code: ${error.code}, Message: ${error.error}");
+        throw error;
+      }
     }
   }
 
@@ -198,10 +231,15 @@ class Octobase {
       var obj = Collection<T>.fromJson(response.data, fromJsonModel);
       return obj;
     } on DioException catch (ex) {
-      OctobaseError error = OctobaseError.fromJson(ex.response?.data);
-      error.code = ex.response?.statusCode;
-      logger.e("Error => Code: ${error.code}, Message: ${error.error}");
-      throw error;
+      if (ex.error is SocketException) {
+        logger.e("Error => Not able to connect to the server");
+        throw ServerConnectionError(ex.message!);
+      } else {
+        OctobaseError error = OctobaseError.fromJson(ex.response?.data);
+        error.code = ex.response?.statusCode;
+        logger.e("Error => Code: ${error.code}, Message: ${error.error}");
+        throw error;
+      }
     }
   }
 
@@ -234,10 +272,15 @@ class Octobase {
       var obj = fromJson(response.data);
       return obj;
     } on DioException catch (ex) {
-      OctobaseError error = OctobaseError.fromJson(ex.response?.data);
-      error.code = ex.response?.statusCode;
-      logger.e("Error => Code: ${error.code}, Message: ${error.error}");
-      throw error;
+      if (ex.error is SocketException) {
+        logger.e("Error => Not able to connect to the server");
+        throw ServerConnectionError(ex.message!);
+      } else {
+        OctobaseError error = OctobaseError.fromJson(ex.response?.data);
+        error.code = ex.response?.statusCode;
+        logger.e("Error => Code: ${error.code}, Message: ${error.error}");
+        throw error;
+      }
     }
   }
 
@@ -258,10 +301,15 @@ class Octobase {
       var obj = fromJson(response.data);
       return obj;
     } on DioException catch (ex) {
-      OctobaseError error = OctobaseError.fromJson(ex.response?.data);
-      error.code = ex.response?.statusCode;
-      logger.e("Error => Code: ${error.code}, Message: ${error.error}");
-      throw error;
+      if (ex.error is SocketException) {
+        logger.e("Error => Not able to connect to the server");
+        throw ServerConnectionError(ex.message!);
+      } else {
+        OctobaseError error = OctobaseError.fromJson(ex.response?.data);
+        error.code = ex.response?.statusCode;
+        logger.e("Error => Code: ${error.code}, Message: ${error.error}");
+        throw error;
+      }
     }
   }
 
@@ -282,10 +330,15 @@ class Octobase {
       var obj = fromJson(response.data);
       return obj;
     } on DioException catch (ex) {
-      OctobaseError error = OctobaseError.fromJson(ex.response?.data);
-      error.code = ex.response?.statusCode;
-      logger.e("Error => Code: ${error.code}, Message: ${error.error}");
-      throw error;
+      if (ex.error is SocketException) {
+        logger.e("Error => Not able to connect to the server");
+        throw ServerConnectionError(ex.message!);
+      } else {
+        OctobaseError error = OctobaseError.fromJson(ex.response?.data);
+        error.code = ex.response?.statusCode;
+        logger.e("Error => Code: ${error.code}, Message: ${error.error}");
+        throw error;
+      }
     }
   }
 
@@ -303,10 +356,15 @@ class Octobase {
       var success = OctobaseSuccess.fromJson(response.data);
       return success;
     } on DioException catch (ex) {
-      OctobaseError error = OctobaseError.fromJson(ex.response?.data);
-      error.code = ex.response?.statusCode;
-      logger.e("Error => Code: ${error.code}, Message: ${error.error}");
-      throw error;
+      if (ex.error is SocketException) {
+        logger.e("Error => Not able to connect to the server");
+        throw ServerConnectionError(ex.message!);
+      } else {
+        OctobaseError error = OctobaseError.fromJson(ex.response?.data);
+        error.code = ex.response?.statusCode;
+        logger.e("Error => Code: ${error.code}, Message: ${error.error}");
+        throw error;
+      }
     }
   }
 
@@ -356,10 +414,15 @@ class Octobase {
       var obj = fromJson(response.data);
       return obj;
     } on DioException catch (ex) {
-      OctobaseError error = OctobaseError.fromJson(ex.response?.data);
-      error.code = ex.response?.statusCode;
-      logger.e("Error => Code: ${error.code}, Message: ${error.error}");
-      throw error;
+      if (ex.error is SocketException) {
+        logger.e("Error => Not able to connect to the server");
+        throw ServerConnectionError(ex.message!);
+      } else {
+        OctobaseError error = OctobaseError.fromJson(ex.response?.data);
+        error.code = ex.response?.statusCode;
+        logger.e("Error => Code: ${error.code}, Message: ${error.error}");
+        throw error;
+      }
     }
   }
 }
