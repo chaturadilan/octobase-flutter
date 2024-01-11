@@ -1,7 +1,7 @@
 name: octobase_flutter
-description: "A new Flutter package project."
-version: 0.0.1
-homepage: null
+description: "Connect OctoberCMS with Flutter using Octobase Plugin."
+version: 1.0.0
+homepage: https://dilexusit.com
 
 environment:
   sdk: '>=3.2.3 <4.0.0'

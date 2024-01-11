@@ -11,29 +11,123 @@ and the Flutter guide for
 [developing packages and plugins](https://flutter.dev/developing-packages).
 -->
 
-TODO: Put a short description of the package here that helps potential users
-know whether this package might be useful for them.
+Connect OctoberCMS with Flutter using Octobase Plugin.
 
 ## Features
 
-TODO: List what your package can do. Maybe include images, gifs, or videos.
+Register, Login, View User Information, Check Token, Register with Firebase
+Select, Add, Update, Delete Operations 
 
 ## Getting started
 
-TODO: List prerequisites and provide or point to information on how to
-start using the package.
+1. Register your Octobase server first
+```dart
+octobase
+        .register('Hello', 'Dilan', 'bcdilan@gmail.com', 'bcdilan', 'dilan1',
+            'dilan123456')
+        .then((value) {
+      debugPrint(value.email);
+    }).catchError((error, stackTrace) {
+      debugPrint(error);
+    });
+```
 
 ## Usage
 
-TODO: Include short and useful examples for package users. Add longer examples
-to `/example` folder.
+Examples
 
 ```dart
-const like = 'sample';
+
+// Register User
+octobase
+        .register('Hello', 'Dilan', 'hello@gmail.com', 'hello', 'hello12345',
+            'hello12345')
+        .then((value) {
+      debugPrint(value.email);
+    }).catchError((error, stackTrace) {
+      debugPrint(error);
+    });
+
+//Login User
+
+ octobase.login('hello@gmail.com', 'hello12345').then((value) {
+      debugPrint(value.token);
+    }).catchError((error, stackTrace) {
+      debugPrint(error);
+    });
+
+// Refresh Token   
+ octobase.refresh().then((userInfo) {
+        debugPrint(userInfo.token);
+      }).catchError((error, stackTrace) {
+        debugPrint(error);
+      });
+
+// Get User Information
+   octobase.user().then((userInfo) {
+        debugPrint(userInfo.token);
+      }).catchError((error, stackTrace) {
+        debugPrint(error);
+      });
+
+// Select from a Model. You need to generate the model using JSON Serializable
+
+// Student model
+import 'package:json_annotation/json_annotation.dart';
+
+part 'student.g.dart';
+
+@JsonSerializable()
+class Student {
+  int? id;
+  String? name;
+  String? address;
+  String? gender;
+
+  Student({this.id, this.name, this.address, this.gender});
+
+  factory Student.fromJson(Map<String, dynamic> json) {
+    return _$StudentFromJson(json);
+  }
+  Map<String, dynamic> toJson() => _$StudentToJson(this);
+}
+
+// Select
+octobase.selectAll<Student>(Student.fromJson).then((value) {
+      print(value.data?[0].gender);
+    }).onError((error, stackTrace) {
+      print(error);
+    });
+
+// Add
+octobase.add<Student>(Student.fromJson, data: {
+      'name': 'Peter',
+      'address': "Flower Road",
+      "gender": "male"
+    }).then((response) {
+      print(response.name);
+    });
+
+//Update
+    octobase.update<Student>(Student.fromJson, 4, data: {'name': 'Dilan'}).then(
+        (response) {
+      print(response.name);
+    });
+
+//Delete
+    octobase.delete<Student>(8).then((response) {});
+
+
 ```
 
-## Additional information
+License (MIT)
+Copyright (c) 2021 Chatura Dilan Perera
 
-TODO: Tell users more about the package: where to find more information, how to
-contribute to the package, how to file issues, what response they can expect
-from the package authors, and more.
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+Support
+Please contact dilan@dilan.me for support and Sample Application
