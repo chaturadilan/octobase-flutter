@@ -22,15 +22,10 @@ Select, Add, Update, Delete Operations
 
 1. Register your Octobase server first
 ```dart
-octobase
-        .register('Hello', 'Dilan', 'bcdilan@gmail.com', 'bcdilan', 'dilan1',
-            'dilan123456')
-        .then((value) {
-      debugPrint(value.email);
-    }).catchError((error, stackTrace) {
-      debugPrint(error);
-    });
+Octobase octobase =
+        OctobaseServer.init('http://serverurl.com', 'api/school/v1');
 ```
+please note your API routes must start with octobase eg: octobase/api/school/v1
 
 ## Usage
 
