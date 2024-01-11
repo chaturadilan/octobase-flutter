@@ -9,6 +9,7 @@ import 'package:octobase_flutter/models/octobase_success.dart';
 import 'package:octobase_flutter/models/server_connection_error.dart';
 import 'package:octobase_flutter/models/user_info.dart';
 import 'package:pluralize/pluralize.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'models/collection.dart';
 import 'models/octobase_error.dart';
@@ -22,8 +23,9 @@ class OctobaseServer {
     Dio dio = Dio(options);
     dio.interceptors.add(LogInterceptor(responseBody: true, requestBody: true));
     octobase._dio = dio;
-    octobase.logger =
-        Logger(printer: PrettyPrinter(methodCount: 0, errorMethodCount: 0));
+    octobase.logger = Logger(
+        printer: PrettyPrinter(
+            methodCount: 0, errorMethodCount: 0, noBoxingByDefault: true));
     octobase.mainRoute = mainRoute;
     return octobase;
   }
@@ -42,8 +44,42 @@ class Octobase {
   String mainRoute = '/';
   String token = '';
 
+  Future<String> _cacheToken(String newToken) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (newToken != '') {
+      await prefs.setString('octobase_token', newToken);
+    } else {
+      logger.e("Cannot save token. Token is Empty");
+    }
+    return newToken;
+  }
+
+  Future<void> _clearToken() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.remove('octobase_token');
+  }
+
+  Future<String> loadToken(
+      {String newToken = '', bool cacheToken = false}) async {
+    if (cacheToken == false) {
+      _clearToken();
+    }
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (newToken != '') {
+      token = newToken;
+      if (cacheToken) await _cacheToken(newToken);
+      return token;
+    } else if (token != '') {
+      return token;
+    } else {
+      token = prefs.getString('octobase_token') ?? '';
+      return token;
+    }
+  }
+
   Future<UserInfo> register(String firstName, String lastName, String email,
-      String username, String password, String confirmPassword) async {
+      String username, String password, String confirmPassword,
+      {bool cacheToken = true}) async {
     try {
       Response response = await _dio.post(
         '/register',
@@ -57,7 +93,7 @@ class Octobase {
         },
       );
       var userInfo = UserInfo.fromJson(response.data);
-      token = userInfo.token ?? '';
+      await loadToken(newToken: userInfo.token ?? '', cacheToken: cacheToken);
       return userInfo;
     } on DioException catch (ex) {
       if (ex.error is SocketException) {
@@ -72,7 +108,8 @@ class Octobase {
     }
   }
 
-  Future<UserInfo> login(String email, String password) async {
+  Future<UserInfo> login(String email, String password,
+      {bool cacheToken = true}) async {
     try {
       Response response = await _dio.post(
         '/login',
@@ -82,7 +119,7 @@ class Octobase {
         },
       );
       var userInfo = UserInfo.fromJson(response.data);
-      token = userInfo.token ?? '';
+      await loadToken(newToken: userInfo.token ?? '', cacheToken: cacheToken);
       return userInfo;
     } on DioException catch (ex) {
       if (ex.error is SocketException) {
@@ -97,7 +134,8 @@ class Octobase {
     }
   }
 
-  Future<UserInfo> loginFirebase(String idToken) async {
+  Future<UserInfo> loginFirebase(String idToken,
+      {bool cacheToken = true}) async {
     try {
       Response response = await _dio.post(
         '/login/firebase',
@@ -106,7 +144,7 @@ class Octobase {
         },
       );
       var userInfo = UserInfo.fromJson(response.data);
-      token = userInfo.token ?? '';
+      await loadToken(newToken: userInfo.token ?? '', cacheToken: cacheToken);
       return userInfo;
     } on DioException catch (ex) {
       if (ex.error is SocketException) {
@@ -121,16 +159,16 @@ class Octobase {
     }
   }
 
-  Future<UserInfo> refresh() async {
+  Future<UserInfo> refresh({bool cacheToken = true}) async {
     try {
       Response response = await _dio.post(
         '/refresh',
         options: Options(
-          headers: {'Authorization': 'Bearer $token'},
+          headers: {'Authorization': 'Bearer ${await loadToken()}'},
         ),
       );
       var userInfo = UserInfo.fromJson(response.data);
-      token = userInfo.token ?? '';
+      await loadToken(newToken: userInfo.token ?? '', cacheToken: cacheToken);
       return userInfo;
     } on DioException catch (ex) {
       if (ex.error is SocketException) {
@@ -150,10 +188,12 @@ class Octobase {
       Response response = await _dio.post(
         '/logout',
         options: Options(
-          headers: {'Authorization': 'Bearer $token'},
+          headers: {'Authorization': 'Bearer ${await loadToken()}'},
         ),
       );
       var success = OctobaseSuccess.fromJson(response.data);
+      token = '';
+      await _clearToken();
       return success;
     } on DioException catch (ex) {
       if (ex.error is SocketException) {
@@ -173,7 +213,7 @@ class Octobase {
       Response response = await _dio.get(
         '/user',
         options: Options(
-          headers: {'Authorization': 'Bearer $token'},
+          headers: {'Authorization': 'Bearer ${await loadToken()}'},
         ),
       );
       var userInfo = UserInfo.fromJson(response.data);
@@ -224,7 +264,7 @@ class Octobase {
         '/$mainRoute/$controller',
         data: data,
         options: Options(
-          headers: {'Authorization': 'Bearer $token'},
+          headers: {'Authorization': 'Bearer ${await loadToken()}'},
         ),
       );
 
@@ -266,7 +306,7 @@ class Octobase {
         '/$mainRoute/$controller/$id',
         data: data,
         options: Options(
-          headers: {'Authorization': 'Bearer $token'},
+          headers: {'Authorization': 'Bearer ${await loadToken()}'},
         ),
       );
       var obj = fromJson(response.data);
@@ -295,7 +335,7 @@ class Octobase {
         '/$mainRoute/$controller',
         data: data,
         options: Options(
-          headers: {'Authorization': 'Bearer $token'},
+          headers: {'Authorization': 'Bearer ${await loadToken()}'},
         ),
       );
       var obj = fromJson(response.data);
@@ -324,7 +364,7 @@ class Octobase {
         '/$mainRoute/$controller/$id',
         data: data,
         options: Options(
-          headers: {'Authorization': 'Bearer $token'},
+          headers: {'Authorization': 'Bearer ${await loadToken()}'},
         ),
       );
       var obj = fromJson(response.data);
@@ -350,7 +390,7 @@ class Octobase {
       Response response = await _dio.delete(
         '/$mainRoute/$controller/$id',
         options: Options(
-          headers: {'Authorization': 'Bearer $token'},
+          headers: {'Authorization': 'Bearer ${await loadToken()}'},
         ),
       );
       var success = OctobaseSuccess.fromJson(response.data);
@@ -373,7 +413,7 @@ class Octobase {
       {String? mainRoute, Map<String, dynamic>? data}) async {
     mainRoute ??= this.mainRoute;
     var headers = <String, dynamic>{};
-    headers['Authorization'] = 'Bearer $token';
+    headers['Authorization'] = 'Bearer ${await loadToken()}';
     Response? response;
     try {
       switch (actionType) {
