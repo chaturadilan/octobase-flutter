@@ -232,6 +232,29 @@ class Octobase {
     }
   }
 
+  Future<OctobaseSuccess> checkToken() async {
+    try {
+      Response response = await _dio.get(
+        '/user',
+        options: Options(
+          headers: {'Authorization': 'Bearer ${await loadToken()}'},
+        ),
+      );
+      var success = OctobaseSuccess.fromJson(response.data);
+      return success;
+    } on DioException catch (ex) {
+      if (ex.error is SocketException) {
+        logger.e("Error => Not able to connect to the server");
+        throw ServerConnectionError(ex.message!);
+      } else {
+        OctobaseError error = OctobaseError.fromJson(ex.response?.data);
+        error.code = ex.response?.statusCode;
+        logger.e("Error => Code: ${error.code}, Message: ${error.error}");
+        throw error;
+      }
+    }
+  }
+
   Future<Collection<T>> selectAll<T>(
     T Function(Map<String, dynamic>) fromJson, {
     String? controller,
