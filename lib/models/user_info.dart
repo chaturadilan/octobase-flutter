@@ -4,7 +4,7 @@ part 'user_info.g.dart';
 
 @JsonSerializable()
 class UserInfo {
-  String? id;
+  int? id;
   @JsonKey(name: 'first_name')
   String? firstName;
   @JsonKey(name: 'last_name')
