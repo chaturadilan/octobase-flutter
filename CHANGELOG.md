@@ -25,3 +25,15 @@
 ## 1.0.6
 
 * Updated UserInfo id
+
+## 1.0.6
+
+* Updated UserInfo id
+
+## 1.0.7
+
+* Updated UserInfo id
+
+## 1.0.8
+
+* Fixed issue with ID
