@@ -412,7 +412,14 @@ class Octobase {
         );
       }
 
-      if (responseSearch?.data.values.first.first['id'] == null) {
+      int? id;
+      try {
+        id = responseSearch?.data?.values?.first?.first['id'];
+      } catch (e) {
+        id = null;
+      }
+
+      if (id == null) {
         if (add) {
           Response response = await _dio.post(
             '/$mainRoute/$controller',
@@ -430,7 +437,7 @@ class Octobase {
       } else {
         if (update) {
           Response response = await _dio.post(
-            '/$mainRoute/$controller/${responseSearch?.data.values.first.first['id']}}',
+            '/$mainRoute/$controller/$id}',
             data: data,
             options: Options(
               headers: {'Authorization': 'Bearer ${await loadToken()}'},
