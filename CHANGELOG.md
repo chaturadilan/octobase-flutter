@@ -17,3 +17,7 @@
 ## 1.0.4
 
 * Changes to Add or Update.
+
+## 1.0.5
+
+* Added UserInfo id
