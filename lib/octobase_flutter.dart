@@ -15,13 +15,17 @@ import 'models/collection.dart';
 import 'models/octobase_error.dart';
 
 class OctobaseServer {
-  static Octobase init(String serverURL, String mainRoute) {
+  static Octobase init(String serverURL, String mainRoute,
+      {bool debugLogs = false}) {
     var octobase = Octobase();
     BaseOptions options = BaseOptions(
       baseUrl: '$serverURL/octobase',
     );
     Dio dio = Dio(options);
-    dio.interceptors.add(LogInterceptor(responseBody: true, requestBody: true));
+    if (debugLogs) {
+      dio.interceptors
+          .add(LogInterceptor(responseBody: true, requestBody: true));
+    }
     octobase._dio = dio;
     octobase.logger = Logger(
         printer: PrettyPrinter(
