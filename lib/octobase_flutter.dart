@@ -387,6 +387,8 @@ class Octobase {
       String? withOthers,
       String? select,
       String? where,
+      bool update = true,
+      bool add = true,
       String? controller,
       String? mainRoute}) async {
     var meta = {};
@@ -411,25 +413,35 @@ class Octobase {
       }
 
       if (responseSearch?.data.values.first.first['id'] == null) {
-        Response response = await _dio.post(
-          '/$mainRoute/$controller',
-          data: data,
-          options: Options(
-            headers: {'Authorization': 'Bearer ${await loadToken()}'},
-          ),
-        );
-        var obj = fromJson(response.data);
-        return obj;
+        if (add) {
+          Response response = await _dio.post(
+            '/$mainRoute/$controller',
+            data: data,
+            options: Options(
+              headers: {'Authorization': 'Bearer ${await loadToken()}'},
+            ),
+          );
+          var obj = fromJson(response.data);
+          return obj;
+        } else {
+          var obj = fromJson(responseSearch?.data);
+          return obj;
+        }
       } else {
-        Response response = await _dio.post(
-          '/$mainRoute/$controller/${responseSearch?.data.values.first.first['id']}}',
-          data: data,
-          options: Options(
-            headers: {'Authorization': 'Bearer ${await loadToken()}'},
-          ),
-        );
-        var obj = fromJson(response.data);
-        return obj;
+        if (update) {
+          Response response = await _dio.post(
+            '/$mainRoute/$controller/${responseSearch?.data.values.first.first['id']}}',
+            data: data,
+            options: Options(
+              headers: {'Authorization': 'Bearer ${await loadToken()}'},
+            ),
+          );
+          var obj = fromJson(response.data);
+          return obj;
+        } else {
+          var obj = fromJson(responseSearch?.data);
+          return obj;
+        }
       }
     } on DioException catch (ex) {
       if (ex.error is SocketException) {
