@@ -380,6 +380,70 @@ class Octobase {
     }
   }
 
+  Future<T> addOrUpdate<T>(T Function(Map<String, dynamic>) fromJson,
+      {Map<String, dynamic>? data,
+      String? userId,
+      String? own,
+      String? withOthers,
+      String? select,
+      String? where,
+      String? controller,
+      String? mainRoute}) async {
+    var meta = {};
+    meta['userId'] = userId ?? meta['userId'];
+    meta['own'] = own ?? meta['own'];
+    meta['with'] = withOthers ?? meta['with'];
+    meta['select'] = select ?? meta['select'];
+    meta['where'] = where ?? meta['where'];
+
+    mainRoute ??= this.mainRoute;
+    controller ??= Pluralize().plural(T.toString().toLowerCase());
+    try {
+      Response? responseSearch;
+      if (where != null) {
+        responseSearch = await _dio.get(
+          '/$mainRoute/$controller',
+          data: meta,
+          options: Options(
+            headers: {'Authorization': 'Bearer ${await loadToken()}'},
+          ),
+        );
+      }
+
+      if (responseSearch?.data.values.first.first['id'] == null) {
+        Response response = await _dio.post(
+          '/$mainRoute/$controller',
+          data: data,
+          options: Options(
+            headers: {'Authorization': 'Bearer ${await loadToken()}'},
+          ),
+        );
+        var obj = fromJson(response.data);
+        return obj;
+      } else {
+        Response response = await _dio.post(
+          '/$mainRoute/$controller/${responseSearch?.data.values.first.first['id']}}',
+          data: data,
+          options: Options(
+            headers: {'Authorization': 'Bearer ${await loadToken()}'},
+          ),
+        );
+        var obj = fromJson(response.data);
+        return obj;
+      }
+    } on DioException catch (ex) {
+      if (ex.error is SocketException) {
+        logger.e("Error => Not able to connect to the server");
+        throw ServerConnectionError(ex.message!);
+      } else {
+        OctobaseError error = OctobaseError.fromJson(ex.response?.data);
+        error.code = ex.response?.statusCode;
+        logger.e("Error => Code: ${error.code}, Message: ${error.error}");
+        throw error;
+      }
+    }
+  }
+
   Future<T> update<T>(T Function(Map<String, dynamic>) fromJson, int id,
       {Map<String, dynamic>? data,
       String? controller,
