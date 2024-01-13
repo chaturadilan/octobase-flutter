@@ -9,3 +9,7 @@
 ## 1.0.2
 
 * Added Logger Filiter.
+
+## 1.0.2
+
+* Added Add or Update.
