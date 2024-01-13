@@ -10,6 +10,10 @@
 
 * Added Logger Filiter.
 
-## 1.0.2
+## 1.0.3
 
 * Added Add or Update.
+
+## 1.0.4
+
+* Changes to Add or Update.
