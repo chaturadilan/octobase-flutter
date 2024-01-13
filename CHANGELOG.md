@@ -21,3 +21,7 @@
 ## 1.0.5
 
 * Added UserInfo id
+
+## 1.0.6
+
+* Updated UserInfo id
