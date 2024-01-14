@@ -388,7 +388,6 @@ class Octobase {
       String? select,
       String? where,
       bool update = true,
-      bool add = true,
       String? controller,
       String? mainRoute}) async {
     var meta = {};
@@ -420,20 +419,15 @@ class Octobase {
       }
 
       if (id == null) {
-        if (add) {
-          Response response = await _dio.post(
-            '/$mainRoute/$controller',
-            data: data,
-            options: Options(
-              headers: {'Authorization': 'Bearer ${await loadToken()}'},
-            ),
-          );
-          var obj = fromJson(response.data);
-          return obj;
-        } else {
-          var obj = fromJson(responseSearch?.data);
-          return obj;
-        }
+        Response response = await _dio.post(
+          '/$mainRoute/$controller',
+          data: data,
+          options: Options(
+            headers: {'Authorization': 'Bearer ${await loadToken()}'},
+          ),
+        );
+        var obj = fromJson(response.data);
+        return obj;
       } else {
         if (update) {
           Response response = await _dio.post(
@@ -446,7 +440,7 @@ class Octobase {
           var obj = fromJson(response.data);
           return obj;
         } else {
-          var obj = fromJson(responseSearch?.data);
+          var obj = fromJson(responseSearch?.data?.values?.first?.first);
           return obj;
         }
       }
