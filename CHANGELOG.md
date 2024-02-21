@@ -37,3 +37,7 @@
 ## 1.0.8
 
 * Fixed issue with ID
+
+## 1.0.10
+
+* Add Dio Inceptors
