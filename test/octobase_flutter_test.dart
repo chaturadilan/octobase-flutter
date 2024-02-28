@@ -9,10 +9,10 @@ void main() {
         .register('Hello', 'Dilan', 'bcdilan@gmail.com', 'bcdilan',
             'dilan123456', 'dilan123456')
         .then((value) {
-      print(value.data.email);
+      //print(value.data.email);
     }).onError((error, stackTrace) {
-      print(error.toString());
-      print(stackTrace.toString());
+      //print(error.toString());
+      //print(stackTrace.toString());
     });
   });
 }
