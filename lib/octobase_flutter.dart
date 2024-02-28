@@ -5,13 +5,13 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:logger/logger.dart';
 import 'package:octobase_flutter/enums/action_type.dart';
+import 'package:octobase_flutter/models/octobase_response.dart';
 import 'package:octobase_flutter/models/octobase_success.dart';
 import 'package:octobase_flutter/models/server_connection_error.dart';
 import 'package:octobase_flutter/models/user_info.dart';
 import 'package:pluralize/pluralize.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'models/collection.dart';
 import 'models/octobase_error.dart';
 
 class OctobaseServer {
@@ -85,8 +85,8 @@ class Octobase {
     }
   }
 
-  Future<UserInfo> register(String firstName, String lastName, String email,
-      String username, String password, String confirmPassword,
+  Future<OctobaseResponse<UserInfo>> register(String firstName, String lastName,
+      String email, String username, String password, String confirmPassword,
       {bool cacheToken = true}) async {
     try {
       Response response = await _dio.post(
@@ -102,7 +102,13 @@ class Octobase {
       );
       var userInfo = UserInfo.fromJson(response.data);
       await loadToken(newToken: userInfo.token ?? '', cacheToken: cacheToken);
-      return userInfo;
+      return OctobaseResponse<UserInfo>(
+        statusCode: response.statusCode,
+        statusMessage: response.statusMessage,
+        response: response,
+        headers: response.headers,
+        data: userInfo,
+      );
     } on DioException catch (ex) {
       if (ex.error is SocketException) {
         logger.e("Error => Not able to connect to the server");
@@ -116,7 +122,7 @@ class Octobase {
     }
   }
 
-  Future<UserInfo> login(String email, String password,
+  Future<OctobaseResponse<UserInfo>> login(String email, String password,
       {bool cacheToken = true}) async {
     try {
       Response response = await _dio.post(
@@ -128,7 +134,13 @@ class Octobase {
       );
       var userInfo = UserInfo.fromJson(response.data);
       await loadToken(newToken: userInfo.token ?? '', cacheToken: cacheToken);
-      return userInfo;
+      return OctobaseResponse<UserInfo>(
+        statusCode: response.statusCode,
+        statusMessage: response.statusMessage,
+        response: response,
+        headers: response.headers,
+        data: userInfo,
+      );
     } on DioException catch (ex) {
       if (ex.error is SocketException) {
         logger.e("Error => Not able to connect to the server");
@@ -142,7 +154,7 @@ class Octobase {
     }
   }
 
-  Future<UserInfo> loginFirebase(String idToken,
+  Future<OctobaseResponse<UserInfo>> loginFirebase(String idToken,
       {bool cacheToken = true}) async {
     try {
       Response response = await _dio.post(
@@ -153,7 +165,13 @@ class Octobase {
       );
       var userInfo = UserInfo.fromJson(response.data);
       await loadToken(newToken: userInfo.token ?? '', cacheToken: cacheToken);
-      return userInfo;
+      return OctobaseResponse<UserInfo>(
+        statusCode: response.statusCode,
+        statusMessage: response.statusMessage,
+        response: response,
+        headers: response.headers,
+        data: userInfo,
+      );
     } on DioException catch (ex) {
       if (ex.error is SocketException) {
         logger.e("Error => Not able to connect to the server");
@@ -167,7 +185,7 @@ class Octobase {
     }
   }
 
-  Future<UserInfo> refresh({bool cacheToken = true}) async {
+  Future<OctobaseResponse<UserInfo>> refresh({bool cacheToken = true}) async {
     try {
       Response response = await _dio.post(
         '/refresh',
@@ -177,7 +195,13 @@ class Octobase {
       );
       var userInfo = UserInfo.fromJson(response.data);
       await loadToken(newToken: userInfo.token ?? '', cacheToken: cacheToken);
-      return userInfo;
+      return OctobaseResponse<UserInfo>(
+        statusCode: response.statusCode,
+        statusMessage: response.statusMessage,
+        response: response,
+        headers: response.headers,
+        data: userInfo,
+      );
     } on DioException catch (ex) {
       if (ex.error is SocketException) {
         logger.e("Error => Not able to connect to the server");
@@ -191,7 +215,7 @@ class Octobase {
     }
   }
 
-  Future<OctobaseSuccess> logout() async {
+  Future<OctobaseResponse<OctobaseSuccess>> logout() async {
     try {
       Response response = await _dio.post(
         '/logout',
@@ -202,7 +226,13 @@ class Octobase {
       var success = OctobaseSuccess.fromJson(response.data);
       token = '';
       await _clearToken();
-      return success;
+      return OctobaseResponse<OctobaseSuccess>(
+        statusCode: response.statusCode,
+        statusMessage: response.statusMessage,
+        response: response,
+        headers: response.headers,
+        data: success,
+      );
     } on DioException catch (ex) {
       if (ex.error is SocketException) {
         logger.e("Error => Not able to connect to the server");
@@ -216,7 +246,7 @@ class Octobase {
     }
   }
 
-  Future<UserInfo> user() async {
+  Future<OctobaseResponse<UserInfo>> user() async {
     try {
       Response response = await _dio.get(
         '/user',
@@ -226,7 +256,13 @@ class Octobase {
       );
       var userInfo = UserInfo.fromJson(response.data);
       token = userInfo.token ?? '';
-      return userInfo;
+      return OctobaseResponse<UserInfo>(
+        statusCode: response.statusCode,
+        statusMessage: response.statusMessage,
+        response: response,
+        headers: response.headers,
+        data: userInfo,
+      );
     } on DioException catch (ex) {
       if (ex.error is SocketException) {
         logger.e("Error => Not able to connect to the server");
@@ -240,7 +276,7 @@ class Octobase {
     }
   }
 
-  Future<OctobaseSuccess> checkToken() async {
+  Future<OctobaseResponse<OctobaseSuccess>> checkToken() async {
     try {
       Response response = await _dio.get(
         '/user',
@@ -249,7 +285,13 @@ class Octobase {
         ),
       );
       var success = OctobaseSuccess.fromJson(response.data);
-      return success;
+      return OctobaseResponse<OctobaseSuccess>(
+        statusCode: response.statusCode,
+        statusMessage: response.statusMessage,
+        response: response,
+        headers: response.headers,
+        data: success,
+      );
     } on DioException catch (ex) {
       if (ex.error is SocketException) {
         logger.e("Error => Not able to connect to the server");
@@ -263,7 +305,7 @@ class Octobase {
     }
   }
 
-  Future<Collection<T>> selectAll<T>(
+  Future<OctobaseResponse> selectAll<T>(
     T Function(Map<String, dynamic>) fromJson, {
     String? controller,
     String? mainRoute,
@@ -279,8 +321,6 @@ class Octobase {
     mainRoute ??= this.mainRoute;
     controller ??= Pluralize().plural(T.toString().toLowerCase());
     try {
-      fromJsonModel(data) => fromJson(data as Map<String, dynamic>);
-
       var data = {};
       data['page'] = page ?? data['page'];
       data['perPage'] = perPage ?? data['perPage'];
@@ -299,8 +339,14 @@ class Octobase {
         ),
       );
 
-      var obj = Collection<T>.fromJson(response.data, fromJsonModel);
-      return obj;
+      var obj = response.data.map<T>((item) => fromJson(item)).toList();
+      return OctobaseResponse<List<T>>(
+        statusCode: response.statusCode,
+        statusMessage: response.statusMessage,
+        response: response,
+        headers: response.headers,
+        data: obj,
+      );
     } on DioException catch (ex) {
       if (ex.error is SocketException) {
         logger.e("Error => Not able to connect to the server");
@@ -314,7 +360,7 @@ class Octobase {
     }
   }
 
-  Future<T> selectOne<T>(
+  Future<OctobaseResponse> selectOne<T>(
     T Function(Map<String, dynamic>) fromJson,
     int id, {
     String? controller,
@@ -341,7 +387,13 @@ class Octobase {
         ),
       );
       var obj = fromJson(response.data);
-      return obj;
+      return OctobaseResponse<T>(
+        statusCode: response.statusCode,
+        statusMessage: response.statusMessage,
+        response: response,
+        headers: response.headers,
+        data: obj,
+      );
     } on DioException catch (ex) {
       if (ex.error is SocketException) {
         logger.e("Error => Not able to connect to the server");
@@ -355,7 +407,7 @@ class Octobase {
     }
   }
 
-  Future<T> add<T>(T Function(Map<String, dynamic>) fromJson,
+  Future<OctobaseResponse> add<T>(T Function(Map<String, dynamic>) fromJson,
       {Map<String, dynamic>? data,
       String? controller,
       String? mainRoute}) async {
@@ -370,7 +422,13 @@ class Octobase {
         ),
       );
       var obj = fromJson(response.data);
-      return obj;
+      return OctobaseResponse<T>(
+        statusCode: response.statusCode,
+        statusMessage: response.statusMessage,
+        response: response,
+        headers: response.headers,
+        data: obj,
+      );
     } on DioException catch (ex) {
       if (ex.error is SocketException) {
         logger.e("Error => Not able to connect to the server");
@@ -384,7 +442,8 @@ class Octobase {
     }
   }
 
-  Future<T> addOrUpdate<T>(T Function(Map<String, dynamic>) fromJson,
+  Future<OctobaseResponse> addOrUpdate<T>(
+      T Function(Map<String, dynamic>) fromJson,
       {Map<String, dynamic>? data,
       String? userId,
       String? own,
@@ -431,7 +490,13 @@ class Octobase {
           ),
         );
         var obj = fromJson(response.data);
-        return obj;
+        return OctobaseResponse<T>(
+          statusCode: response.statusCode,
+          statusMessage: response.statusMessage,
+          response: response,
+          headers: response.headers,
+          data: obj,
+        );
       } else {
         if (update) {
           Response response = await _dio.post(
@@ -442,10 +507,18 @@ class Octobase {
             ),
           );
           var obj = fromJson(response.data);
-          return obj;
+          return OctobaseResponse<T>(
+            statusCode: response.statusCode,
+            statusMessage: response.statusMessage,
+            response: response,
+            headers: response.headers,
+            data: obj,
+          );
         } else {
           var obj = fromJson(responseSearch?.data?.values?.first?.first);
-          return obj;
+          return OctobaseResponse<T>(
+            data: obj,
+          );
         }
       }
     } on DioException catch (ex) {
@@ -461,7 +534,8 @@ class Octobase {
     }
   }
 
-  Future<T> update<T>(T Function(Map<String, dynamic>) fromJson, int id,
+  Future<OctobaseResponse> update<T>(
+      T Function(Map<String, dynamic>) fromJson, int id,
       {Map<String, dynamic>? data,
       String? controller,
       String? mainRoute}) async {
@@ -476,7 +550,13 @@ class Octobase {
         ),
       );
       var obj = fromJson(response.data);
-      return obj;
+      return OctobaseResponse<T>(
+        statusCode: response.statusCode,
+        statusMessage: response.statusMessage,
+        response: response,
+        headers: response.headers,
+        data: obj,
+      );
     } on DioException catch (ex) {
       if (ex.error is SocketException) {
         logger.e("Error => Not able to connect to the server");
@@ -490,7 +570,7 @@ class Octobase {
     }
   }
 
-  Future<OctobaseSuccess> delete<T>(int id,
+  Future<OctobaseResponse> delete<T>(int id,
       {String? controller, String? mainRoute}) async {
     mainRoute ??= this.mainRoute;
     controller ??= Pluralize().plural(T.toString().toLowerCase());
@@ -502,7 +582,13 @@ class Octobase {
         ),
       );
       var success = OctobaseSuccess.fromJson(response.data);
-      return success;
+      return OctobaseResponse<OctobaseSuccess>(
+        statusCode: response.statusCode,
+        statusMessage: response.statusMessage,
+        response: response,
+        headers: response.headers,
+        data: success,
+      );
     } on DioException catch (ex) {
       if (ex.error is SocketException) {
         logger.e("Error => Not able to connect to the server");
@@ -516,8 +602,8 @@ class Octobase {
     }
   }
 
-  Future<T> custom<T>(T Function(Map<String, dynamic>) fromJson, String? url,
-      ActionType actionType,
+  Future<OctobaseResponse> custom<T>(T Function(Map<String, dynamic>) fromJson,
+      String? url, ActionType actionType,
       {String? mainRoute, Map<String, dynamic>? data}) async {
     mainRoute ??= this.mainRoute;
     var headers = <String, dynamic>{};
@@ -560,7 +646,13 @@ class Octobase {
       }
 
       var obj = fromJson(response.data);
-      return obj;
+      return OctobaseResponse<T>(
+        statusCode: response.statusCode,
+        statusMessage: response.statusMessage,
+        response: response,
+        headers: response.headers,
+        data: obj,
+      );
     } on DioException catch (ex) {
       if (ex.error is SocketException) {
         logger.e("Error => Not able to connect to the server");
