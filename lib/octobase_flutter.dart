@@ -476,7 +476,7 @@ class Octobase {
 
       int? id;
       try {
-        id = responseSearch?.data?.values?.first?.first['id'];
+        id = responseSearch?.data?.first['id'];
       } catch (e) {
         id = null;
       }
@@ -515,7 +515,7 @@ class Octobase {
             data: obj,
           );
         } else {
-          var obj = fromJson(responseSearch?.data?.values?.first?.first);
+          var obj = fromJson(responseSearch?.data?.first);
           return OctobaseResponse<T>(
             data: obj,
           );
