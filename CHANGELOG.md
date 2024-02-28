@@ -41,3 +41,7 @@
 ## 1.0.10
 
 * Add Dio Inceptors
+
+## 2.0.0
+
+* Added Octobase Response
