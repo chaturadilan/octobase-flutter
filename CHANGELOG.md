@@ -45,3 +45,7 @@
 ## 2.0.0
 
 * Added Octobase Response
+
+## 2.0.1
+
+* Fixed profile response
