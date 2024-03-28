@@ -49,3 +49,8 @@
 ## 2.0.1
 
 * Fixed profile response
+
+
+## 2.0.1
+
+* Added action property
