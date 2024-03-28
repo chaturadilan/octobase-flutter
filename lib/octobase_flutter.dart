@@ -309,6 +309,7 @@ class Octobase {
     T Function(Map<String, dynamic>) fromJson, {
     String? controller,
     String? mainRoute,
+    String action = '',
     int? page,
     int? perPage,
     String? userId,
@@ -320,6 +321,9 @@ class Octobase {
   }) async {
     mainRoute ??= this.mainRoute;
     controller ??= Pluralize().plural(T.toString().toLowerCase());
+    if (action != '') {
+      controller = '$controller/$action';
+    }
     try {
       var data = {};
       data['page'] = page ?? data['page'];
@@ -365,6 +369,7 @@ class Octobase {
     int id, {
     String? controller,
     String? mainRoute,
+    String action = '',
     String? userId,
     String? own,
     String? withOthers,
@@ -374,6 +379,9 @@ class Octobase {
   }) async {
     mainRoute ??= this.mainRoute;
     controller ??= Pluralize().plural(T.toString().toLowerCase());
+    if (action != '') {
+      controller = '$controller/$action';
+    }
     try {
       var data = {};
       data['with'] = withOthers ?? data['with'];
@@ -407,12 +415,18 @@ class Octobase {
     }
   }
 
-  Future<OctobaseResponse> add<T>(T Function(Map<String, dynamic>) fromJson,
-      {Map<String, dynamic>? data,
-      String? controller,
-      String? mainRoute}) async {
+  Future<OctobaseResponse> add<T>(
+    T Function(Map<String, dynamic>) fromJson, {
+    Map<String, dynamic>? data,
+    String? controller,
+    String? mainRoute,
+    String action = '',
+  }) async {
     mainRoute ??= this.mainRoute;
     controller ??= Pluralize().plural(T.toString().toLowerCase());
+    if (action != '') {
+      controller = '$controller/$action';
+    }
     try {
       Response response = await _dio.post(
         '/$mainRoute/$controller',
@@ -443,16 +457,18 @@ class Octobase {
   }
 
   Future<OctobaseResponse> addOrUpdate<T>(
-      T Function(Map<String, dynamic>) fromJson,
-      {Map<String, dynamic>? data,
-      String? userId,
-      String? own,
-      String? withOthers,
-      String? select,
-      String? where,
-      bool update = true,
-      String? controller,
-      String? mainRoute}) async {
+    T Function(Map<String, dynamic>) fromJson, {
+    Map<String, dynamic>? data,
+    String? userId,
+    String? own,
+    String? withOthers,
+    String? select,
+    String? where,
+    bool update = true,
+    String? controller,
+    String? mainRoute,
+    String action = '',
+  }) async {
     var meta = {};
     meta['userId'] = userId ?? meta['userId'];
     meta['own'] = own ?? meta['own'];
@@ -462,6 +478,9 @@ class Octobase {
 
     mainRoute ??= this.mainRoute;
     controller ??= Pluralize().plural(T.toString().toLowerCase());
+    if (action != '') {
+      controller = '$controller/$action';
+    }
     try {
       Response? responseSearch;
       if (where != null) {
@@ -535,12 +554,18 @@ class Octobase {
   }
 
   Future<OctobaseResponse> update<T>(
-      T Function(Map<String, dynamic>) fromJson, int id,
-      {Map<String, dynamic>? data,
-      String? controller,
-      String? mainRoute}) async {
+    T Function(Map<String, dynamic>) fromJson,
+    int id, {
+    Map<String, dynamic>? data,
+    String? controller,
+    String? mainRoute,
+    String action = '',
+  }) async {
     mainRoute ??= this.mainRoute;
     controller ??= Pluralize().plural(T.toString().toLowerCase());
+    if (action != '') {
+      controller = '$controller/$action';
+    }
     try {
       Response response = await _dio.post(
         '/$mainRoute/$controller/$id',
@@ -570,10 +595,17 @@ class Octobase {
     }
   }
 
-  Future<OctobaseResponse> delete<T>(int id,
-      {String? controller, String? mainRoute}) async {
+  Future<OctobaseResponse> delete<T>(
+    int id, {
+    String? controller,
+    String? mainRoute,
+    String action = '',
+  }) async {
     mainRoute ??= this.mainRoute;
     controller ??= Pluralize().plural(T.toString().toLowerCase());
+    if (action != '') {
+      controller = '$controller/$action';
+    }
     try {
       Response response = await _dio.delete(
         '/$mainRoute/$controller/$id',
