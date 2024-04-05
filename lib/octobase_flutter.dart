@@ -638,7 +638,8 @@ class Octobase {
       String? url, ActionType actionType,
       {String? mainRoute,
       Map<String, dynamic>? data,
-      bool isList = false}) async {
+      bool isList = false,
+      isNullResponse = false}) async {
     mainRoute ??= this.mainRoute;
     var headers = <String, dynamic>{};
     headers['Authorization'] = 'Bearer ${await loadToken()}';
@@ -677,6 +678,16 @@ class Octobase {
               headers: headers,
             ),
           );
+      }
+
+      if (isNullResponse) {
+        return OctobaseResponse<T>(
+          statusCode: response.statusCode,
+          statusMessage: response.statusMessage,
+          response: response,
+          headers: response.headers,
+          data: null,
+        );
       }
 
       if (isList) {

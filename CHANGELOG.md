@@ -54,3 +54,7 @@
 ## 2.0.2
 
 * Added action property
+
+## 2.0.3
+
+* Added list to custom and null response

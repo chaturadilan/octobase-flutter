@@ -5,7 +5,7 @@ class OctobaseResponse<T> {
   final String? statusMessage;
   final Headers? headers;
   final Response? response;
-  final T data;
+  final T? data;
   OctobaseResponse(
       {this.statusCode,
       this.statusMessage,
