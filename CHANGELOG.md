@@ -58,3 +58,7 @@
 ## 2.0.3
 
 * Added list to custom and null response
+
+## 2.0.4
+
+* null response to custom
