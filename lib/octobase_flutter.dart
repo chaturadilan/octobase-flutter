@@ -636,7 +636,9 @@ class Octobase {
 
   Future<OctobaseResponse> custom<T>(T Function(Map<String, dynamic>) fromJson,
       String? url, ActionType actionType,
-      {String? mainRoute, Map<String, dynamic>? data}) async {
+      {String? mainRoute,
+      Map<String, dynamic>? data,
+      bool isList = false}) async {
     mainRoute ??= this.mainRoute;
     var headers = <String, dynamic>{};
     headers['Authorization'] = 'Bearer ${await loadToken()}';
@@ -677,14 +679,25 @@ class Octobase {
           );
       }
 
-      var obj = fromJson(response.data);
-      return OctobaseResponse<T>(
-        statusCode: response.statusCode,
-        statusMessage: response.statusMessage,
-        response: response,
-        headers: response.headers,
-        data: obj,
-      );
+      if (isList) {
+        var obj = response.data.map<T>((item) => fromJson(item)).toList();
+        return OctobaseResponse<List<T>>(
+          statusCode: response.statusCode,
+          statusMessage: response.statusMessage,
+          response: response,
+          headers: response.headers,
+          data: obj,
+        );
+      } else {
+        var obj = fromJson(response.data);
+        return OctobaseResponse<T>(
+          statusCode: response.statusCode,
+          statusMessage: response.statusMessage,
+          response: response,
+          headers: response.headers,
+          data: obj,
+        );
+      }
     } on DioException catch (ex) {
       if (ex.error is SocketException) {
         logger.e("Error => Not able to connect to the server");
