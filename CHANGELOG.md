@@ -63,6 +63,6 @@
 
 * null response to custom
 
-## 2.0 5
+## 2.0.5
 
 * Refactor custom method in Octobase class to support query parameters
