@@ -637,7 +637,8 @@ class Octobase {
   Future<OctobaseResponse> custom<T>(T Function(Map<String, dynamic>) fromJson,
       String? url, ActionType actionType,
       {String? mainRoute,
-      Map<String, dynamic>? data,
+      Object? data,
+      Map<String, dynamic>? queryParams,
       bool isList = false,
       isNullResponse = false}) async {
     mainRoute ??= this.mainRoute;
@@ -649,6 +650,8 @@ class Octobase {
         case ActionType.put:
           response = await _dio.put(
             '/$mainRoute/$url',
+            data: data,
+            queryParameters: queryParams,
             options: Options(
               headers: headers,
             ),
@@ -657,6 +660,8 @@ class Octobase {
         case ActionType.get:
           response = await _dio.get(
             '/$mainRoute/$url',
+            data: data,
+            queryParameters: queryParams,
             options: Options(
               headers: headers,
             ),
@@ -665,6 +670,8 @@ class Octobase {
         case ActionType.delete:
           response = await _dio.delete(
             '/$mainRoute/$url',
+            data: data,
+            queryParameters: queryParams,
             options: Options(
               headers: headers,
             ),
@@ -674,6 +681,7 @@ class Octobase {
           response = await _dio.post(
             '/$mainRoute/$url',
             data: data,
+            queryParameters: queryParams,
             options: Options(
               headers: headers,
             ),
