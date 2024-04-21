@@ -8,12 +8,12 @@ part of 'octobase_error.dart';
 
 OctobaseError _$OctobaseErrorFromJson(Map<String, dynamic> json) =>
     OctobaseError(
-      error: json['error'] as String?,
+      message: json['message'] as String?,
       code: json['code'] as int?,
     );
 
 Map<String, dynamic> _$OctobaseErrorToJson(OctobaseError instance) =>
     <String, dynamic>{
-      'error': instance.error,
+      'message': instance.message,
       'code': instance.code,
     };

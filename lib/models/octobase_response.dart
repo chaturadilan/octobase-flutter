@@ -6,10 +6,14 @@ class OctobaseResponse<T> {
   final Headers? headers;
   final Response? response;
   final T? data;
-  OctobaseResponse(
-      {this.statusCode,
-      this.statusMessage,
-      required this.data,
-      this.response,
-      this.headers});
+  final bool isError;
+
+  OctobaseResponse({
+    this.statusCode,
+    this.statusMessage,
+    required this.data,
+    this.response,
+    this.headers,
+    this.isError = false,
+  });
 }

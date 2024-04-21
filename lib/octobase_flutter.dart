@@ -115,9 +115,15 @@ class Octobase {
         throw ServerConnectionError(ex.message!);
       } else {
         OctobaseError error = OctobaseError.fromJson(ex.response?.data);
-        error.code = ex.response?.statusCode;
-        logger.e("Error => Code: ${error.code}, Message: ${error.error}");
-        throw error;
+        logger.e(
+            "Error => Status Code: ${ex.response?.statusCode}, Code: ${error.code}, Message: ${error.message}");
+        throw OctobaseResponse<OctobaseError>(
+            statusCode: ex.response?.statusCode,
+            statusMessage: ex.response?.statusMessage,
+            response: ex.response,
+            headers: ex.response?.headers,
+            data: error,
+            isError: true);
       }
     }
   }
@@ -147,9 +153,15 @@ class Octobase {
         throw ServerConnectionError(ex.message!);
       } else {
         OctobaseError error = OctobaseError.fromJson(ex.response?.data);
-        error.code = ex.response?.statusCode;
-        logger.e("Error => Code: ${error.code}, Message: ${error.error}");
-        throw error;
+        logger.e(
+            "Error => Status Code: ${ex.response?.statusCode}, Code: ${error.code}, Message: ${error.message}");
+        throw OctobaseResponse<OctobaseError>(
+            statusCode: ex.response?.statusCode,
+            statusMessage: ex.response?.statusMessage,
+            response: ex.response,
+            headers: ex.response?.headers,
+            data: error,
+            isError: true);
       }
     }
   }
@@ -178,9 +190,15 @@ class Octobase {
         throw ServerConnectionError(ex.message!);
       } else {
         OctobaseError error = OctobaseError.fromJson(ex.response?.data);
-        error.code = ex.response?.statusCode;
-        logger.e("Error => Code: ${error.code}, Message: ${error.error}");
-        throw error;
+        logger.e(
+            "Error => Status Code: ${ex.response?.statusCode}, Code: ${error.code}, Message: ${error.message}");
+        throw OctobaseResponse<OctobaseError>(
+            statusCode: ex.response?.statusCode,
+            statusMessage: ex.response?.statusMessage,
+            response: ex.response,
+            headers: ex.response?.headers,
+            data: error,
+            isError: true);
       }
     }
   }
@@ -208,9 +226,15 @@ class Octobase {
         throw ServerConnectionError(ex.message!);
       } else {
         OctobaseError error = OctobaseError.fromJson(ex.response?.data);
-        error.code = ex.response?.statusCode;
-        logger.e("Error => Code: ${error.code}, Message: ${error.error}");
-        throw error;
+        logger.e(
+            "Error => Status Code: ${ex.response?.statusCode}, Code: ${error.code}, Message: ${error.message}");
+        throw OctobaseResponse<OctobaseError>(
+            statusCode: ex.response?.statusCode,
+            statusMessage: ex.response?.statusMessage,
+            response: ex.response,
+            headers: ex.response?.headers,
+            data: error,
+            isError: true);
       }
     }
   }
@@ -239,9 +263,15 @@ class Octobase {
         throw ServerConnectionError(ex.message!);
       } else {
         OctobaseError error = OctobaseError.fromJson(ex.response?.data);
-        error.code = ex.response?.statusCode;
-        logger.e("Error => Code: ${error.code}, Message: ${error.error}");
-        throw error;
+        logger.e(
+            "Error => Status Code: ${ex.response?.statusCode}, Code: ${error.code}, Message: ${error.message}");
+        throw OctobaseResponse<OctobaseError>(
+            statusCode: ex.response?.statusCode,
+            statusMessage: ex.response?.statusMessage,
+            response: ex.response,
+            headers: ex.response?.headers,
+            data: error,
+            isError: true);
       }
     }
   }
@@ -269,9 +299,15 @@ class Octobase {
         throw ServerConnectionError(ex.message!);
       } else {
         OctobaseError error = OctobaseError.fromJson(ex.response?.data);
-        error.code = ex.response?.statusCode;
-        logger.e("Error => Code: ${error.code}, Message: ${error.error}");
-        throw error;
+        logger.e(
+            "Error => Status Code: ${ex.response?.statusCode}, Code: ${error.code}, Message: ${error.message}");
+        throw OctobaseResponse<OctobaseError>(
+            statusCode: ex.response?.statusCode,
+            statusMessage: ex.response?.statusMessage,
+            response: ex.response,
+            headers: ex.response?.headers,
+            data: error,
+            isError: true);
       }
     }
   }
@@ -298,9 +334,15 @@ class Octobase {
         throw ServerConnectionError(ex.message!);
       } else {
         OctobaseError error = OctobaseError.fromJson(ex.response?.data);
-        error.code = ex.response?.statusCode;
-        logger.e("Error => Code: ${error.code}, Message: ${error.error}");
-        throw error;
+        logger.e(
+            "Error => Status Code: ${ex.response?.statusCode}, Code: ${error.code}, Message: ${error.message}");
+        throw OctobaseResponse<OctobaseError>(
+            statusCode: ex.response?.statusCode,
+            statusMessage: ex.response?.statusMessage,
+            response: ex.response,
+            headers: ex.response?.headers,
+            data: error,
+            isError: true);
       }
     }
   }
@@ -357,9 +399,15 @@ class Octobase {
         throw ServerConnectionError(ex.message!);
       } else {
         OctobaseError error = OctobaseError.fromJson(ex.response?.data);
-        error.code = ex.response?.statusCode;
-        logger.e("Error => Code: ${error.code}, Message: ${error.error}");
-        throw error;
+        logger.e(
+            "Error => Status Code: ${ex.response?.statusCode}, Code: ${error.code}, Message: ${error.message}");
+        throw OctobaseResponse<OctobaseError>(
+            statusCode: ex.response?.statusCode,
+            statusMessage: ex.response?.statusMessage,
+            response: ex.response,
+            headers: ex.response?.headers,
+            data: error,
+            isError: true);
       }
     }
   }
@@ -408,9 +456,15 @@ class Octobase {
         throw ServerConnectionError(ex.message!);
       } else {
         OctobaseError error = OctobaseError.fromJson(ex.response?.data);
-        error.code = ex.response?.statusCode;
-        logger.e("Error => Code: ${error.code}, Message: ${error.error}");
-        throw error;
+        logger.e(
+            "Error => Status Code: ${ex.response?.statusCode}, Code: ${error.code}, Message: ${error.message}");
+        throw OctobaseResponse<OctobaseError>(
+            statusCode: ex.response?.statusCode,
+            statusMessage: ex.response?.statusMessage,
+            response: ex.response,
+            headers: ex.response?.headers,
+            data: error,
+            isError: true);
       }
     }
   }
@@ -449,9 +503,15 @@ class Octobase {
         throw ServerConnectionError(ex.message!);
       } else {
         OctobaseError error = OctobaseError.fromJson(ex.response?.data);
-        error.code = ex.response?.statusCode;
-        logger.e("Error => Code: ${error.code}, Message: ${error.error}");
-        throw error;
+        logger.e(
+            "Error => Status Code: ${ex.response?.statusCode}, Code: ${error.code}, Message: ${error.message}");
+        throw OctobaseResponse<OctobaseError>(
+            statusCode: ex.response?.statusCode,
+            statusMessage: ex.response?.statusMessage,
+            response: ex.response,
+            headers: ex.response?.headers,
+            data: error,
+            isError: true);
       }
     }
   }
@@ -546,9 +606,15 @@ class Octobase {
         throw ServerConnectionError(ex.message!);
       } else {
         OctobaseError error = OctobaseError.fromJson(ex.response?.data);
-        error.code = ex.response?.statusCode;
-        logger.e("Error => Code: ${error.code}, Message: ${error.error}");
-        throw error;
+        logger.e(
+            "Error => Status Code: ${ex.response?.statusCode}, Code: ${error.code}, Message: ${error.message}");
+        throw OctobaseResponse<OctobaseError>(
+            statusCode: ex.response?.statusCode,
+            statusMessage: ex.response?.statusMessage,
+            response: ex.response,
+            headers: ex.response?.headers,
+            data: error,
+            isError: true);
       }
     }
   }
@@ -588,9 +654,15 @@ class Octobase {
         throw ServerConnectionError(ex.message!);
       } else {
         OctobaseError error = OctobaseError.fromJson(ex.response?.data);
-        error.code = ex.response?.statusCode;
-        logger.e("Error => Code: ${error.code}, Message: ${error.error}");
-        throw error;
+        logger.e(
+            "Error => Status Code: ${ex.response?.statusCode}, Code: ${error.code}, Message: ${error.message}");
+        throw OctobaseResponse<OctobaseError>(
+            statusCode: ex.response?.statusCode,
+            statusMessage: ex.response?.statusMessage,
+            response: ex.response,
+            headers: ex.response?.headers,
+            data: error,
+            isError: true);
       }
     }
   }
@@ -627,9 +699,15 @@ class Octobase {
         throw ServerConnectionError(ex.message!);
       } else {
         OctobaseError error = OctobaseError.fromJson(ex.response?.data);
-        error.code = ex.response?.statusCode;
-        logger.e("Error => Code: ${error.code}, Message: ${error.error}");
-        throw error;
+        logger.e(
+            "Error => Status Code: ${ex.response?.statusCode}, Code: ${error.code}, Message: ${error.message}");
+        throw OctobaseResponse<OctobaseError>(
+            statusCode: ex.response?.statusCode,
+            statusMessage: ex.response?.statusMessage,
+            response: ex.response,
+            headers: ex.response?.headers,
+            data: error,
+            isError: true);
       }
     }
   }
@@ -723,9 +801,15 @@ class Octobase {
         throw ServerConnectionError(ex.message!);
       } else {
         OctobaseError error = OctobaseError.fromJson(ex.response?.data);
-        error.code = ex.response?.statusCode;
-        logger.e("Error => Code: ${error.code}, Message: ${error.error}");
-        throw error;
+        logger.e(
+            "Error => Status Code: ${ex.response?.statusCode}, Code: ${error.code}, Message: ${error.message}");
+        throw OctobaseResponse<OctobaseError>(
+            statusCode: ex.response?.statusCode,
+            statusMessage: ex.response?.statusMessage,
+            response: ex.response,
+            headers: ex.response?.headers,
+            data: error,
+            isError: true);
       }
     }
   }
