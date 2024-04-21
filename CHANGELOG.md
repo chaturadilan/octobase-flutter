@@ -66,3 +66,7 @@
 ## 2.0.5
 
 * Refactor custom method in Octobase class to support query parameters
+
+## 3.0.0
+
+* Refactor error properties
