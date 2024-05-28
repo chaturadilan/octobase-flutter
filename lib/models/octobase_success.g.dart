@@ -9,7 +9,7 @@ part of 'octobase_success.dart';
 OctobaseSuccess _$OctobaseSuccessFromJson(Map<String, dynamic> json) =>
     OctobaseSuccess(
       success: json['success'] as String?,
-      code: json['code'] as int?,
+      code: (json['code'] as num?)?.toInt(),
     );
 
 Map<String, dynamic> _$OctobaseSuccessToJson(OctobaseSuccess instance) =>

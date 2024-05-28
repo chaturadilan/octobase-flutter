@@ -7,9 +7,9 @@ part of 'meta.dart';
 // **************************************************************************
 
 Meta _$MetaFromJson(Map<String, dynamic> json) => Meta(
-      perPage: json['per_page'] as int?,
-      total: json['total'] as int?,
-      page: json['page'] as int?,
+      perPage: (json['per_page'] as num?)?.toInt(),
+      total: (json['total'] as num?)?.toInt(),
+      page: (json['page'] as num?)?.toInt(),
     );
 
 Map<String, dynamic> _$MetaToJson(Meta instance) => <String, dynamic>{
