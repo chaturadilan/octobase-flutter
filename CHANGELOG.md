@@ -70,3 +70,7 @@
 ## 3.0.0
 
 * Refactor error properties
+
+## 3.1.0
+
+* Added Appcheck Header
