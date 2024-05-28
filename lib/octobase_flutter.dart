@@ -87,8 +87,13 @@ class Octobase {
 
   Future<OctobaseResponse<UserInfo>> register(String firstName, String lastName,
       String email, String username, String password, String confirmPassword,
-      {bool cacheToken = true}) async {
+      {bool cacheToken = true, String? appCheckToken}) async {
     try {
+      Options options = Options(
+        headers: {
+          if (appCheckToken != null) 'X-Firebase-AppCheck': appCheckToken,
+        },
+      );
       Response response = await _dio.post(
         '/register',
         data: {
@@ -99,6 +104,7 @@ class Octobase {
           'password': password,
           'password_confirmation': confirmPassword
         },
+        options: options,
       );
       var userInfo = UserInfo.fromJson(response.data);
       await loadToken(newToken: userInfo.token ?? '', cacheToken: cacheToken);
@@ -129,14 +135,20 @@ class Octobase {
   }
 
   Future<OctobaseResponse<UserInfo>> login(String email, String password,
-      {bool cacheToken = true}) async {
+      {bool cacheToken = true, String? appCheckToken}) async {
     try {
+      Options options = Options(
+        headers: {
+          if (appCheckToken != null) 'X-Firebase-AppCheck': appCheckToken,
+        },
+      );
       Response response = await _dio.post(
         '/login',
         data: {
           'email': email,
           'password': password,
         },
+        options: options,
       );
       var userInfo = UserInfo.fromJson(response.data);
       await loadToken(newToken: userInfo.token ?? '', cacheToken: cacheToken);
@@ -167,13 +179,19 @@ class Octobase {
   }
 
   Future<OctobaseResponse<UserInfo>> loginFirebase(String idToken,
-      {bool cacheToken = true}) async {
+      {bool cacheToken = true, String? appCheckToken}) async {
     try {
+      Options options = Options(
+        headers: {
+          if (appCheckToken != null) 'X-Firebase-AppCheck': appCheckToken,
+        },
+      );
       Response response = await _dio.post(
         '/login/firebase',
         data: {
           'token': idToken,
         },
+        options: options,
       );
       var userInfo = UserInfo.fromJson(response.data);
       await loadToken(newToken: userInfo.token ?? '', cacheToken: cacheToken);
@@ -203,12 +221,16 @@ class Octobase {
     }
   }
 
-  Future<OctobaseResponse<UserInfo>> refresh({bool cacheToken = true}) async {
+  Future<OctobaseResponse<UserInfo>> refresh(
+      {bool cacheToken = true, String? appCheckToken}) async {
     try {
       Response response = await _dio.post(
         '/refresh',
         options: Options(
-          headers: {'Authorization': 'Bearer ${await loadToken()}'},
+          headers: {
+            'Authorization': 'Bearer ${await loadToken()}',
+            if (appCheckToken != null) 'X-Firebase-AppCheck': appCheckToken,
+          },
         ),
       );
       var userInfo = UserInfo.fromJson(response.data);
