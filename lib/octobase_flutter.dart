@@ -16,13 +16,20 @@ import 'models/octobase_error.dart';
 
 class OctobaseServer {
   static Octobase init(String serverURL, String mainRoute,
-      {bool debugLogs = false, List<Interceptor> interceptors = const []}) {
+      {bool debugLogs = false,
+      Dio? dio,
+      List<Interceptor> interceptors = const []}) {
     var octobase = Octobase();
     BaseOptions options = BaseOptions(
       baseUrl: '$serverURL/octobase',
     );
 
-    Dio dio = Dio(options);
+    if (dio == null) {
+      dio = Dio(options);
+    } else {
+      dio.options = options;
+    }
+
     if (debugLogs) {
       dio.interceptors
           .add(LogInterceptor(responseBody: true, requestBody: true));

@@ -74,3 +74,7 @@
 ## 3.1.0
 
 * Added Appcheck Header
+
+## 3.2.0
+
+* Can Add Optinal Dio OBject
