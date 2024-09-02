@@ -18,7 +18,9 @@ class OctobaseServer {
   static Octobase init(String serverURL, String mainRoute,
       {bool debugLogs = false,
       Dio? dio,
-      List<Interceptor> interceptors = const []}) {
+      Dio? mockDio,
+      List<Interceptor> interceptors = const [],
+      List<Interceptor> mockInterceptors = const []}) {
     var octobase = Octobase();
     BaseOptions options = BaseOptions(
       baseUrl: '$serverURL/octobase',
@@ -41,6 +43,23 @@ class OctobaseServer {
     octobase.logger = Logger(
         printer: PrettyPrinter(
             methodCount: 0, errorMethodCount: 0, noBoxingByDefault: true));
+
+    // Do same for Mock
+
+    if (mockDio != null) {
+      if (debugLogs) {
+        mockDio.interceptors
+            .add(LogInterceptor(responseBody: true, requestBody: true));
+      }
+      for (var interceptor in mockInterceptors) {
+        mockDio.interceptors.add(interceptor);
+      }
+      octobase._mockDio = mockDio;
+    }
+
+    octobase.logger = Logger(
+        printer: PrettyPrinter(
+            methodCount: 0, errorMethodCount: 0, noBoxingByDefault: true));
     octobase.mainRoute = mainRoute;
     return octobase;
   }
@@ -55,6 +74,7 @@ class Octobase {
   Octobase._internal();
 
   late Dio _dio;
+  Dio? _mockDio;
   late Logger logger;
   String mainRoute = '/';
   String token = '';
@@ -67,6 +87,14 @@ class Octobase {
       logger.e("Cannot save token. Token is Empty");
     }
     return newToken;
+  }
+
+  Dio _getDio(bool isMock) {
+    if (isMock == true && _mockDio == null) {
+      throw Exception("Mock Dio is not initialized");
+    } else {
+      return isMock ? _mockDio! : _dio;
+    }
   }
 
   Future<void> _clearToken() async {
@@ -94,14 +122,17 @@ class Octobase {
 
   Future<OctobaseResponse<UserInfo>> register(String firstName, String lastName,
       String email, String username, String password, String confirmPassword,
-      {bool cacheToken = true, String? appCheckToken}) async {
+      {bool cacheToken = true,
+      String? appCheckToken,
+      bool isMock = false}) async {
     try {
       Options options = Options(
         headers: {
           if (appCheckToken != null) 'X-Firebase-AppCheck': appCheckToken,
         },
       );
-      Response response = await _dio.post(
+
+      Response response = await _getDio(isMock).post(
         '/register',
         data: {
           'first_name': firstName,
@@ -142,14 +173,17 @@ class Octobase {
   }
 
   Future<OctobaseResponse<UserInfo>> login(String email, String password,
-      {bool cacheToken = true, String? appCheckToken}) async {
+      {bool cacheToken = true,
+      String? appCheckToken,
+      bool isMock = false}) async {
     try {
       Options options = Options(
         headers: {
           if (appCheckToken != null) 'X-Firebase-AppCheck': appCheckToken,
         },
       );
-      Response response = await _dio.post(
+
+      Response response = await _getDio(isMock).post(
         '/login',
         data: {
           'email': email,
@@ -186,14 +220,16 @@ class Octobase {
   }
 
   Future<OctobaseResponse<UserInfo>> loginFirebase(String idToken,
-      {bool cacheToken = true, String? appCheckToken}) async {
+      {bool cacheToken = true,
+      String? appCheckToken,
+      bool isMock = false}) async {
     try {
       Options options = Options(
         headers: {
           if (appCheckToken != null) 'X-Firebase-AppCheck': appCheckToken,
         },
       );
-      Response response = await _dio.post(
+      Response response = await _getDio(isMock).post(
         '/login/firebase',
         data: {
           'token': idToken,
@@ -229,9 +265,11 @@ class Octobase {
   }
 
   Future<OctobaseResponse<UserInfo>> refresh(
-      {bool cacheToken = true, String? appCheckToken}) async {
+      {bool cacheToken = true,
+      String? appCheckToken,
+      bool isMock = false}) async {
     try {
-      Response response = await _dio.post(
+      Response response = await _getDio(isMock).post(
         '/refresh',
         options: Options(
           headers: {
@@ -268,9 +306,10 @@ class Octobase {
     }
   }
 
-  Future<OctobaseResponse<OctobaseSuccess>> logout() async {
+  Future<OctobaseResponse<OctobaseSuccess>> logout(
+      {bool isMock = false}) async {
     try {
-      Response response = await _dio.post(
+      Response response = await _getDio(isMock).post(
         '/logout',
         options: Options(
           headers: {'Authorization': 'Bearer ${await loadToken()}'},
@@ -305,9 +344,9 @@ class Octobase {
     }
   }
 
-  Future<OctobaseResponse<UserInfo>> user() async {
+  Future<OctobaseResponse<UserInfo>> user({bool isMock = false}) async {
     try {
-      Response response = await _dio.get(
+      Response response = await _getDio(isMock).get(
         '/user',
         options: Options(
           headers: {'Authorization': 'Bearer ${await loadToken()}'},
@@ -341,9 +380,10 @@ class Octobase {
     }
   }
 
-  Future<OctobaseResponse<OctobaseSuccess>> checkToken() async {
+  Future<OctobaseResponse<OctobaseSuccess>> checkToken(
+      {bool isMock = false}) async {
     try {
-      Response response = await _dio.get(
+      Response response = await _getDio(isMock).get(
         '/user',
         options: Options(
           headers: {'Authorization': 'Bearer ${await loadToken()}'},
@@ -389,6 +429,7 @@ class Octobase {
     String? select,
     String? where,
     String? order,
+    bool isMock = false,
   }) async {
     mainRoute ??= this.mainRoute;
     controller ??= Pluralize().plural(T.toString().toLowerCase());
@@ -406,7 +447,7 @@ class Octobase {
       data['where'] = where ?? data['where'];
       data['order'] = order ?? data['order'];
 
-      Response response = await _dio.get(
+      Response response = await _getDio(isMock).get(
         '/$mainRoute/$controller',
         data: data,
         options: Options(
@@ -453,6 +494,7 @@ class Octobase {
     String? select,
     String? where,
     String? order,
+    bool isMock = false,
   }) async {
     mainRoute ??= this.mainRoute;
     controller ??= Pluralize().plural(T.toString().toLowerCase());
@@ -464,7 +506,7 @@ class Octobase {
       data['with'] = withOthers ?? data['with'];
       data['select'] = select ?? data['select'];
 
-      Response response = await _dio.get(
+      Response response = await _getDio(isMock).get(
         '/$mainRoute/$controller/$id',
         data: data,
         options: Options(
@@ -504,6 +546,7 @@ class Octobase {
     String? controller,
     String? mainRoute,
     String action = '',
+    bool isMock = false,
   }) async {
     mainRoute ??= this.mainRoute;
     controller ??= Pluralize().plural(T.toString().toLowerCase());
@@ -511,7 +554,7 @@ class Octobase {
       controller = '$controller/$action';
     }
     try {
-      Response response = await _dio.post(
+      Response response = await _getDio(isMock).post(
         '/$mainRoute/$controller',
         data: data,
         options: Options(
@@ -557,6 +600,7 @@ class Octobase {
     String? controller,
     String? mainRoute,
     String action = '',
+    bool isMock = false,
   }) async {
     var meta = {};
     meta['userId'] = userId ?? meta['userId'];
@@ -573,7 +617,7 @@ class Octobase {
     try {
       Response? responseSearch;
       if (where != null) {
-        responseSearch = await _dio.get(
+        responseSearch = await _getDio(isMock).get(
           '/$mainRoute/$controller',
           data: meta,
           options: Options(
@@ -590,7 +634,7 @@ class Octobase {
       }
 
       if (id == null) {
-        Response response = await _dio.post(
+        Response response = await _getDio(isMock).post(
           '/$mainRoute/$controller',
           data: data,
           options: Options(
@@ -607,7 +651,7 @@ class Octobase {
         );
       } else {
         if (update) {
-          Response response = await _dio.post(
+          Response response = await _getDio(isMock).post(
             '/$mainRoute/$controller/$id}',
             data: data,
             options: Options(
@@ -655,6 +699,7 @@ class Octobase {
     String? controller,
     String? mainRoute,
     String action = '',
+    bool isMock = false,
   }) async {
     mainRoute ??= this.mainRoute;
     controller ??= Pluralize().plural(T.toString().toLowerCase());
@@ -662,7 +707,7 @@ class Octobase {
       controller = '$controller/$action';
     }
     try {
-      Response response = await _dio.post(
+      Response response = await _getDio(isMock).post(
         '/$mainRoute/$controller/$id',
         data: data,
         options: Options(
@@ -701,6 +746,7 @@ class Octobase {
     String? controller,
     String? mainRoute,
     String action = '',
+    bool isMock = false,
   }) async {
     mainRoute ??= this.mainRoute;
     controller ??= Pluralize().plural(T.toString().toLowerCase());
@@ -708,7 +754,7 @@ class Octobase {
       controller = '$controller/$action';
     }
     try {
-      Response response = await _dio.delete(
+      Response response = await _getDio(isMock).delete(
         '/$mainRoute/$controller/$id',
         options: Options(
           headers: {'Authorization': 'Bearer ${await loadToken()}'},
@@ -741,13 +787,17 @@ class Octobase {
     }
   }
 
-  Future<OctobaseResponse> custom<T>(T Function(Map<String, dynamic>) fromJson,
-      String? url, ActionType actionType,
-      {String? mainRoute,
-      Object? data,
-      Map<String, dynamic>? queryParams,
-      bool isList = false,
-      isNullResponse = false}) async {
+  Future<OctobaseResponse> custom<T>(
+    T Function(Map<String, dynamic>) fromJson,
+    String? url,
+    ActionType actionType, {
+    String? mainRoute,
+    Object? data,
+    Map<String, dynamic>? queryParams,
+    bool isList = false,
+    isNullResponse = false,
+    bool isMock = false,
+  }) async {
     mainRoute ??= this.mainRoute;
     var headers = <String, dynamic>{};
     headers['Authorization'] = 'Bearer ${await loadToken()}';
@@ -755,7 +805,7 @@ class Octobase {
     try {
       switch (actionType) {
         case ActionType.put:
-          response = await _dio.put(
+          response = await _getDio(isMock).put(
             '/$mainRoute/$url',
             data: data,
             queryParameters: queryParams,
@@ -765,7 +815,7 @@ class Octobase {
           );
           break;
         case ActionType.get:
-          response = await _dio.get(
+          response = await _getDio(isMock).get(
             '/$mainRoute/$url',
             data: data,
             queryParameters: queryParams,
@@ -775,7 +825,7 @@ class Octobase {
           );
           break;
         case ActionType.delete:
-          response = await _dio.delete(
+          response = await _getDio(isMock).delete(
             '/$mainRoute/$url',
             data: data,
             queryParameters: queryParams,
@@ -785,7 +835,7 @@ class Octobase {
           );
           break;
         default:
-          response = await _dio.post(
+          response = await _getDio(isMock).post(
             '/$mainRoute/$url',
             data: data,
             queryParameters: queryParams,
