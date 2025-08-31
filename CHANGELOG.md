@@ -94,3 +94,7 @@
 ## 3.3.3
 
 * Fixed issue with add or update
+
+## 3.3.4
+
+* Fixed query paramters

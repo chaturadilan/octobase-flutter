@@ -437,19 +437,19 @@ class Octobase {
       controller = '$controller/$action';
     }
     try {
-      var data = {};
-      data['page'] = page ?? data['page'];
-      data['perPage'] = perPage ?? data['perPage'];
-      data['userId'] = userId ?? data['userId'];
-      data['own'] = own ?? data['own'];
-      data['with'] = withOthers ?? data['with'];
-      data['select'] = select ?? data['select'];
-      data['where'] = where ?? data['where'];
-      data['order'] = order ?? data['order'];
+      Map<String, dynamic> queryString = {};
+      queryString['page'] = page ?? queryString['page'];
+      queryString['perPage'] = perPage ?? queryString['perPage'];
+      queryString['userId'] = userId ?? queryString['userId'];
+      queryString['own'] = own ?? queryString['own'];
+      queryString['with'] = withOthers ?? queryString['with'];
+      queryString['select'] = select ?? queryString['select'];
+      queryString['where'] = where ?? queryString['where'];
+      queryString['order'] = order ?? queryString['order'];
 
       Response response = await _getDio(isMock).get(
         '/$mainRoute/$controller',
-        data: data,
+        queryParameters: queryString,
         options: Options(
           headers: {'Authorization': 'Bearer ${await loadToken()}'},
         ),
@@ -502,13 +502,13 @@ class Octobase {
       controller = '$controller/$action';
     }
     try {
-      var data = {};
-      data['with'] = withOthers ?? data['with'];
-      data['select'] = select ?? data['select'];
+      Map<String, dynamic> queryString = {};
+      queryString['with'] = withOthers ?? queryString['with'];
+      queryString['select'] = select ?? queryString['select'];
 
       Response response = await _getDio(isMock).get(
         '/$mainRoute/$controller/$id',
-        data: data,
+        queryParameters: queryString,
         options: Options(
           headers: {'Authorization': 'Bearer ${await loadToken()}'},
         ),
@@ -602,7 +602,7 @@ class Octobase {
     String action = '',
     bool isMock = false,
   }) async {
-    var meta = {};
+    Map<String, dynamic> meta = {};
     meta['userId'] = userId ?? meta['userId'];
     meta['own'] = own ?? meta['own'];
     meta['with'] = withOthers ?? meta['with'];
@@ -619,7 +619,7 @@ class Octobase {
       if (where != null) {
         responseSearch = await _getDio(isMock).get(
           '/$mainRoute/$controller',
-          //data: meta,
+          queryParameters: meta,
           options: Options(
             headers: {'Authorization': 'Bearer ${await loadToken()}'},
           ),
