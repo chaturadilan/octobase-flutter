@@ -619,7 +619,7 @@ class Octobase {
       if (where != null) {
         responseSearch = await _getDio(isMock).get(
           '/$mainRoute/$controller',
-          data: meta,
+          //data: meta,
           options: Options(
             headers: {'Authorization': 'Bearer ${await loadToken()}'},
           ),
