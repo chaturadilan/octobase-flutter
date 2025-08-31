@@ -90,3 +90,7 @@
 ## 3.3.2
 
 * added logger
+
+## 3.3.3
+
+* Fixed issue with add or update
